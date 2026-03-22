@@ -5,6 +5,7 @@ import morgan from "morgan";
 import { env } from "./config/env";
 import authRouter from "./routes/auth.routes";
 import entryRouter from "./routes/entry.routes";
+import { errorHandler } from "./middleware/errorHandler";
 
 const app = express();
 
@@ -37,6 +38,9 @@ app.use((_req, res) => {
     message: "Route not found",
   });
 });
+
+// ── Global Error Handler ───────────────────────────────────────────
+app.use(errorHandler);
 
 // ── Start Server ───────────────────────────────────────────────────
 app.listen(env.PORT, () => {

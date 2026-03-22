@@ -4,11 +4,13 @@ import {
   deleteEntry,
   getEntries,
 } from "../controllers/entry.controller";
+import { validate } from "../middleware/validate";
+import { createEntrySchema } from "../schemas/entry.schema";
 
 const router = Router();
 
 // POST /api/entries
-router.post("/", createEntry);
+router.post("/", validate(createEntrySchema), createEntry);
 
 // GET /api/entries
 router.get("/", getEntries);
