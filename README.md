@@ -29,6 +29,26 @@ A full-stack developer activity tracker built with TypeScript, NestJS, PostgreSQ
 | GET    | `/api/entries`       | Get all log entries     |
 | DELETE | `/api/entries/:id`   | Delete a log entry      |
 
+## Project Structure
+
+```
+devlog/
+├── apps/
+│   ├── backend/          # Express → NestJS API
+│   │   └── src/
+│   │       ├── config/       # Environment config
+│   │       ├── controllers/  # Route handlers
+│   │       ├── middleware/   # Error handler, validation
+│   │       ├── routes/       # Route definitions
+│   │       ├── schemas/      # Zod validation schemas
+│   │       └── types/        # Backend-specific types
+│   └── frontend/         # React + Vite (part 4)
+└── packages/
+    └── shared/           # Shared TypeScript types
+        └── src/
+            └── types/    # Auth, Entry, Summary types
+```
+
 ## Local Development
 
 ### Prerequisites
@@ -52,16 +72,16 @@ npm run dev:backend
 
 Backend runs on `http://localhost:5000`
 
-| Part | Focus                                      | Status             |
-| ---- | ------------------------------------------ | ------------------ |
-| 1–2  | TypeScript foundation, Express stub API    | ✅ Part 1 complete |
-| 3    | PostgreSQL + Prisma, real auth, entry CRUD | 🔜                 |
-| 4    | Jest tests + React frontend scaffold       | 🔜                 |
-| 5    | NestJS migration + entries UI              | 🔜                 |
-| 6    | AI summary + dashboard                     | 🔜                 |
-| 7–8  | Deploy + GitHub polish                     | 🔜                 |
-| 9    | Open source contribution                   | 🔜                 |
-| 10   | Resume rewrite + applications              | 🔜                 |
+| Part | Focus                                      | Status               |
+| ---- | ------------------------------------------ | -------------------- |
+| 1–2  | TypeScript foundation, Express stub API    | ✅ Complete complete |
+| 3    | PostgreSQL + Prisma, real auth, entry CRUD | 🔜                   |
+| 4    | Jest tests + React frontend scaffold       | 🔜                   |
+| 5    | NestJS migration + entries UI              | 🔜                   |
+| 6    | AI summary + dashboard                     | 🔜                   |
+| 7–8  | Deploy + GitHub polish                     | 🔜                   |
+| 9    | Open source contribution                   | 🔜                   |
+| 10   | Resume rewrite + applications              | 🔜                   |
 
 ## Live Demo
 
