@@ -3,10 +3,18 @@ import cors from "cors";
 import helmet from "helmet";
 import morgan from "morgan";
 import { env } from "./config/env";
+import authRouter from "./routes/auth.routes";
+import entryRouter from "./routes/entry.routes";
 
 const app = express();
 
 // ── Security & Parsing Middleware ──────────────────────────────────
+app.use(helmet());
+app.use(cors({ origin: env.CORS_ORIGIN, credentials: true }));
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
+
+// ── Request Logging ────────────────────────────────────────────────
 app.use(morgan(env.NODE_ENV === "production" ? "combined" : "dev"));
 
 // ── Health Check ───────────────────────────────────────────────────
@@ -19,8 +27,8 @@ app.get("/health", (_req, res) => {
 });
 
 // ── Routes (stubs coming next) ─────────────────────────────────────
-// app.use('/api/auth', authRouter);
-// app.use('/api/entries', entriesRouter);
+app.use("/api/auth", authRouter);
+app.use("/api/entries", entryRouter);
 
 // ── 404 Handler ────────────────────────────────────────────────────
 app.use((_req, res) => {
