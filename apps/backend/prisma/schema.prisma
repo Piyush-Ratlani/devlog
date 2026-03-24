@@ -1,0 +1,85 @@
+generator client {
+  provider   = "prisma-client-js"
+  output     = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User{
+  id                    String      @id @default(cuid())
+  email                 String      @unique
+  name                  String      
+  password              String      
+  createdAt             DateTime    @default(now())      
+  updatedAt             DateTime    @updatedAt 
+  entries               Entry[]
+  refreshTokens         RefreshToken[]  
+  weeklySummaries       WeeklySummary[]
+
+  @@map("users")
+}
+
+model Entry {
+  id                    String      @id @default(cuid())
+  date                  DateTime 
+  hours                 Float
+  project               String      
+  mood                  Mood      
+  notes                 String?      
+  createdAt             DateTime    @default(now())      
+  updatedAt             DateTime    @updatedAt 
+  userId                String
+  user                  User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+  tags                  Tag[]  
+
+  @@map("entries")
+}
+
+model Tag {
+  id                    String      @id @default(cuid())
+  name                  String      
+  entries               Entry[]
+
+  @@unique([name])
+  @@map("tags")
+}
+
+model RefreshToken {
+  id                    String      @id @default(cuid())
+  token                 String      @unique
+  userId                String
+  user                  User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+  expiresAt             DateTime
+  createdAt             DateTime    @default(now())      
+
+  @@map("refresh_tokens")
+}
+
+model WeeklySummary {
+  id                    String      @id @default(cuid())
+  weekStart             DateTime
+  weekEnd               DateTime
+  totalHours            Float
+  topProjects           String[]
+  topTags               String[]
+  themes                String[]
+  wins                  String[]
+  risks                 String[]
+  generatedText         String
+  createdAt             DateTime @default(now())
+  userId                String
+  user                  User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("weekly_summaries")
+} 
+
+enum Mood {
+  great
+  good
+  neutral
+  bad
+  terrible
+}

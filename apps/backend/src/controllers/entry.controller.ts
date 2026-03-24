@@ -1,83 +1,57 @@
 import { Request, Response } from "express";
+import { asyncHandler } from "../middleware/errorHandler";
+import { AuthRequest } from "../middleware/auth";
 import {
-  CreateEntryRequestBody,
-  Entry,
-  EntryResponse,
-  EntriesResponse,
-} from "../types/entry.types";
+  createEntry,
+  getEntries,
+  deleteEntry,
+} from "../services/entry.service";
+import { EntryFilters } from "../types/entry.types";
 
-export const createEntry = (
-  req: Request<{}, EntryResponse, CreateEntryRequestBody>,
-  res: Response<EntryResponse>,
-): void => {
-  const { date, hours, mood, project, tags, notes } = req.body;
+export const createEntryHandler = asyncHandler(
+  async (req: Request, res: Response): Promise<void> => {
+    const { userId } = req as AuthRequest;
+    const entry = await createEntry(userId, req.body);
 
-  // TODO: Week 3 — validate input, save to DB via Prisma, return real entry
-  const stubEntry: Entry = {
-    id: "stub-entry-001",
-    date,
-    hours,
-    mood,
-    project,
-    tags,
-    notes,
-    createdAt: new Date().toISOString(),
-    updatedAt: new Date().toISOString(),
-  };
+    res.status(201).json({
+      status: "success",
+      message: "Entry created successfully",
+      data: entry,
+    });
+  },
+);
 
-  res.status(201).json({
-    status: "success",
-    message: "Entry created successfully (stub)",
-    data: stubEntry,
-  });
-};
+export const getEntriesHandler = asyncHandler(
+  async (req: Request, res: Response): Promise<void> => {
+    const { userId } = req as AuthRequest;
 
-export const getEntries = (
-  _req: Request,
-  res: Response<EntriesResponse>,
-): void => {
-  // TODO: Week 3 — query DB, support filter by date range and tags
-  const stubEntries: Entry[] = [
-    {
-      id: "stub-entry-001",
-      date: "2026-03-22",
-      hours: 6,
-      project: "DevLog",
-      tags: ["typescript", "backend"],
-      mood: "great",
-      notes: "Set up the entire backend structure",
-      createdAt: new Date().toISOString(),
-      updatedAt: new Date().toISOString(),
-    },
-    {
-      id: "stub-entry-002",
-      date: "2026-03-21",
-      hours: 4,
-      project: "DevLog",
-      tags: ["express", "routes"],
-      mood: "good",
-      notes: "Built stub routes and controllers",
-      createdAt: new Date().toISOString(),
-      updatedAt: new Date().toISOString(),
-    },
-  ];
+    const filters: EntryFilters = {
+      startDate: req.query.startDate as string | undefined,
+      endDate: req.query.endDate as string | undefined,
+      project: req.query.project as string | undefined,
+      tags: req.query.tags ? (req.query.tags as string).split(",") : undefined,
+    };
 
-  res.status(200).json({
-    status: "success",
-    message: "Entries fetched successfully (stub)",
-    data: stubEntries,
-  });
-};
+    const entries = await getEntries(userId, filters);
 
-export const deleteEntry = (
-  req: Request<{ id: string }>,
-  res: Response,
-): void => {
-  const { id } = req.params;
+    res.status(200).json({
+      status: "success",
+      message: "Entries fetched successfully",
+      data: entries,
+    });
+  },
+);
 
-  // TODO: Week 3 — verify entry belongs to user, delete from DB
-  res.status(200).json({
-    status: "success",
-    message: `Entry ${id} deleted successfully (stub)`,
-  });
-};
+export const deleteEntryHandler = asyncHandler(
+  async (req: Request, res: Response): Promise<void> => {
+    const { userId } = req as AuthRequest;
+    const { id } = req.params as { id: string };
+
+    await deleteEntry(userId, id);
+
+    res.status(200).json({
+      status: "success",
+      message: `Entry deleted successfully`,
+    });
+  },
+);

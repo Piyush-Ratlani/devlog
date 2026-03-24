@@ -6,6 +6,7 @@ import { env } from "./config/env";
 import authRouter from "./routes/auth.routes";
 import entryRouter from "./routes/entry.routes";
 import { errorHandler } from "./middleware/errorHandler";
+import cookieParser from "cookie-parser";
 
 const app = express();
 
@@ -14,6 +15,7 @@ app.use(helmet());
 app.use(cors({ origin: env.CORS_ORIGIN, credentials: true }));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+app.use(cookieParser());
 
 // ── Request Logging ────────────────────────────────────────────────
 app.use(morgan(env.NODE_ENV === "production" ? "combined" : "dev"));
