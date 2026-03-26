@@ -22,7 +22,6 @@ A full-stack developer activity tracker built with TypeScript, NestJS, PostgreSQ
 
 ### Auth
 
-
 | Method | Endpoint             | Auth   | Description                                  |
 | ------ | -------------------- | ------ | -------------------------------------------- |
 | POST   | `/api/auth/register` | No     | Register a new user                          |
@@ -30,9 +29,7 @@ A full-stack developer activity tracker built with TypeScript, NestJS, PostgreSQ
 | POST   | `/api/auth/refresh`  | Cookie | Get new access token via refresh token       |
 | POST   | `/api/auth/logout`   | Cookie | Logout and invalidate refresh token          |
 
-
 ### Entries
-
 
 | Method | Endpoint           | Auth   | Description                        |
 | ------ | ------------------ | ------ | ---------------------------------- |
@@ -40,9 +37,7 @@ A full-stack developer activity tracker built with TypeScript, NestJS, PostgreSQ
 | GET    | `/api/entries`     | Bearer | Get all entries (supports filters) |
 | DELETE | `/api/entries/:id` | Bearer | Delete an entry                    |
 
-
 ### Filters (GET /api/entries)
-
 
 | Query Param | Example            | Description                      |
 | ----------- | ------------------ | -------------------------------- |
@@ -51,14 +46,11 @@ A full-stack developer activity tracker built with TypeScript, NestJS, PostgreSQ
 | `tags`      | `typescript,react` | Filter by tags (comma separated) |
 | `project`   | `DevLog`           | Filter by project name           |
 
-
 ### Health
-
 
 | Method | Endpoint  | Description         |
 | ------ | --------- | ------------------- |
 | GET    | `/health` | Server health check |
-
 
 ## Project Structure
 
@@ -142,18 +134,14 @@ Email:    dev@devlog.com
 Password: password123
 ```
 
-
-| Part | Focus                                      | Status     |
-| ---- | ------------------------------------------ | ---------- |
+| Part | Focus                                      | Status      |
+| ---- | ------------------------------------------ | ----------- |
 | 1–2  | TypeScript foundation, Express stub API    | ✅ Complete |
 | 3    | PostgreSQL + Prisma, real auth, entry CRUD | ✅ Complete |
-| 4    | Jest tests + React frontend scaffold       | 🔜 Up next |
-| 5    | NestJS migration + entries UI              | 🔜         |
-| 6    | AI summary + dashboard                     | 🔜         |
-| 7–8  | Deploy + GitHub polish                     | 🔜         |
-| 9    | Open source contribution                   | 🔜         |
-| 10   | Resume rewrite + applications              | 🔜         |
-
+| 4    | Jest tests + React frontend scaffold       | 🔜 Up next  |
+| 5    | NestJS migration + entries UI              | 🔜          |
+| 6    | AI summary + dashboard                     | 🔜          |
+| 7–8  | Deploy + GitHub polish                     | 🔜          |
 
 ## Live Demo
 

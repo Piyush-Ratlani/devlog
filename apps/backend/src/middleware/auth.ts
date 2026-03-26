@@ -26,6 +26,6 @@ export const protect = (
 
     next();
   } catch (error) {
-    next(new AppError("Invalide or expired token", 401));
+    next(new AppError("Invalid or expired token", 401));
   }
 };
