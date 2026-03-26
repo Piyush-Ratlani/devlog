@@ -59,23 +59,33 @@ devlog/
 ├── apps/
 │   ├── backend/
 │   │   ├── prisma/
-│   │   │   ├── schema.prisma     # Database models
-│   │   │   ├── seed.ts           # Development seed data
-│   │   │   └── migrations/       # Migration history
+│   │   │   ├── schema.prisma        # Database models
+│   │   │   ├── seed.ts              # Development seed data
+│   │   │   └── migrations/          # Migration history
 │   │   └── src/
-│   │       ├── config/           # Env config, Prisma client
-│   │       ├── controllers/      # HTTP request handlers
-│   │       ├── middleware/        # Auth, validation, error handler
-│   │       ├── routes/           # Route definitions
-│   │       ├── schemas/          # Zod validation schemas
-│   │       ├── services/         # Business logic
-│   │       ├── types/            # Backend-specific types
-│   │       └── utils/            # JWT utilities
-│   └── frontend/                 # React + Vite (part 4)
+│   │       ├── __tests__/           # Jest + Supertest tests
+│   │       ├── config/              # Env config, Prisma client
+│   │       ├── controllers/         # HTTP request handlers
+│   │       ├── middleware/           # Auth, validation, error handler
+│   │       ├── routes/              # Route definitions
+│   │       ├── schemas/             # Zod validation schemas
+│   │       ├── services/            # Business logic
+│   │       ├── types/               # Backend-specific types
+│   │       └── utils/               # JWT utilities
+│   └── frontend/
+│       └── src/
+│           ├── components/
+│           │   ├── layout/          # ProtectedRoute, Navbar
+│           │   └── ui/              # Reusable UI primitives
+│           ├── context/             # AuthContext — global auth state
+│           ├── hooks/               # Custom React hooks
+│           ├── lib/                 # Axios instance with interceptors
+│           ├── pages/               # LoginPage, RegisterPage, DashboardPage
+│           └── types/               # Frontend-specific types
 └── packages/
-    └── shared/                   # Shared TypeScript types
+    └── shared/                      # Shared TypeScript types
         └── src/
-            └── types/            # Auth, Entry, Summary types
+            └── types/               # Auth, Entry, Summary types
 ```
 
 ## Database Schema
@@ -121,11 +131,16 @@ npx prisma migrate dev
 # Seed development data
 npx prisma db seed
 
-# Start backend
+# Start backend (from root)
+cd ../..
 npm run dev:backend
+
+# Start frontend (from root, new terminal)
+npm run dev:frontend
 ```
 
-Backend runs on `http://localhost:5000`
+- Backend runs on `http://localhost:5000`
+- Frontend runs on `http://localhost:5173`
 
 ### Dev Credentials (after seeding)
 
@@ -134,11 +149,23 @@ Email:    dev@devlog.com
 Password: password123
 ```
 
+## Tests
+
+```bash
+cd apps/backend
+npm test              # Run all tests
+npm run test:coverage # Run with coverage report
+```
+
+**Current coverage:** 25 tests across auth and entry routes
+
+## Project Status
+
 | Part | Focus                                      | Status      |
 | ---- | ------------------------------------------ | ----------- |
 | 1–2  | TypeScript foundation, Express stub API    | ✅ Complete |
 | 3    | PostgreSQL + Prisma, real auth, entry CRUD | ✅ Complete |
-| 4    | Jest tests + React frontend scaffold       | 🔜 Up next  |
+| 4    | Jest tests + React frontend scaffold       | ✅ Complete |
 | 5    | NestJS migration + entries UI              | 🔜          |
 | 6    | AI summary + dashboard                     | 🔜          |
 | 7–8  | Deploy + GitHub polish                     | 🔜          |

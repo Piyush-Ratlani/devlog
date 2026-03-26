@@ -11,6 +11,9 @@ import {
   LoginRequestBody,
   AuthResponse,
 } from "../types/auth.types";
+import { AuthRequest } from "../middleware/auth";
+import { prisma } from "../config/prisma";
+import { AppError } from "../types/error.types";
 
 export const register = asyncHandler(
   async (
@@ -87,6 +90,32 @@ export const logout = asyncHandler(
     res.status(200).json({
       status: "success",
       message: "Logged out successfully",
+    });
+  },
+);
+
+export const getMe = asyncHandler(
+  async (req: Request, res: Response): Promise<void> => {
+    const { userId } = req as AuthRequest;
+
+    const user = await prisma.user.findUnique({
+      where: { id: userId },
+      select: {
+        id: true,
+        email: true,
+        name: true,
+        createdAt: true,
+      },
+    });
+
+    if (!user) {
+      throw new AppError("User not found", 404);
+    }
+
+    res.status(200).json({
+      status: "success",
+      message: "User fetched successfully",
+      data: { user },
     });
   },
 );
