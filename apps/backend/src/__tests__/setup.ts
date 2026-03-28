@@ -1,4 +1,6 @@
-import { prisma } from "../config/prisma";
+import { PrismaClient } from "../generated/prisma";
+
+const prisma = new PrismaClient();
 
 beforeAll(async () => {
   // Verify database connection before running tests

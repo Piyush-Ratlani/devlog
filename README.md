@@ -6,10 +6,19 @@ A full-stack developer activity tracker built with TypeScript, NestJS, PostgreSQ
 
 - **Frontend:** React, TypeScript, Tailwind CSS, Recharts, Vite
 - **Backend:** NestJS, TypeScript, PostgreSQL, Prisma ORM
-- **Auth:** JWT with refresh tokens
+- **Auth:** JWT with refresh tokens + httpOnly cookies
 - **AI:** Claude API for weekly summary generation
 - **Deploy:** Railway (backend + DB), Vercel (frontend)
 - **CI:** GitHub Actions
+
+## Backend Architecture
+
+- **NestJS Modules** — AuthModule, EntriesModule, PrismaModule (global)
+- **Guards** — JwtGuard protects all entry routes and `/api/auth/me`
+- **DTOs** — class-validator decorators validate all incoming request bodies
+- **Exception Filter** — GlobalExceptionFilter formats all errors consistently
+- **Services** — business logic separated from controllers
+- **Dependency Injection** — PrismaService injected via NestJS DI system
 
 ## Features
 
@@ -161,14 +170,14 @@ npm run test:coverage # Run with coverage report
 
 ## Project Status
 
-| Part | Focus                                      | Status      |
-| ---- | ------------------------------------------ | ----------- |
-| 1–2  | TypeScript foundation, Express stub API    | ✅ Complete |
-| 3    | PostgreSQL + Prisma, real auth, entry CRUD | ✅ Complete |
-| 4    | Jest tests + React frontend scaffold       | ✅ Complete |
-| 5    | NestJS migration + entries UI              | 🔜          |
-| 6    | AI summary + dashboard                     | 🔜          |
-| 7–8  | Deploy + GitHub polish                     | 🔜          |
+| Part | Focus                                      | Status                |
+| ---- | ------------------------------------------ | --------------------- |
+| 1–2  | TypeScript foundation, Express stub API    | ✅ Complete           |
+| 3    | PostgreSQL + Prisma, real auth, entry CRUD | ✅ Complete           |
+| 4    | Jest tests + React frontend scaffold       | ✅ Complete           |
+| 5    | NestJS migration + entries UI              | NestJS migration done |
+| 6    | AI summary + dashboard                     | 🔜                    |
+| 7–8  | Deploy + GitHub polish                     | 🔜                    |
 
 ## Live Demo
 
