@@ -4,7 +4,7 @@ import {
   NotFoundException,
 } from "@nestjs/common";
 import { PrismaService } from "../prisma/prisma.service";
-import { CreateEntryDto } from "./entries.dto";
+import { CreateEntryDto, UpdateEntryDto } from "./entries.dto";
 
 @Injectable()
 export class EntriesService {
@@ -65,6 +65,43 @@ export class EntriesService {
     });
 
     return entries;
+  }
+
+  async updateEntry(userId: string, entryId: string, dto: UpdateEntryDto) {
+    const entry = await this.prisma.entry.findUnique({
+      where: { id: entryId },
+    });
+
+    if (!entry) {
+      throw new NotFoundException("Entry not found");
+    }
+
+    if (entry.userId !== userId) {
+      throw new ForbiddenException("Not authorized to update this entry");
+    }
+
+    const updated = await this.prisma.entry.update({
+      where: { id: entryId },
+      data: {
+        ...(dto.date && { date: new Date(dto.date) }),
+        ...(dto.hours !== undefined && { hours: dto.hours }),
+        ...(dto.project && { project: dto.project }),
+        ...(dto.mood && { mood: dto.mood }),
+        ...(dto.notes !== undefined && { notes: dto.notes }),
+        ...(dto.tags && {
+          tags: {
+            set: [],
+            connectOrCreate: dto.tags.map(tag => ({
+              where: { name: tag },
+              create: { name: tag },
+            })),
+          },
+        }),
+      },
+      include: { tags: true },
+    });
+
+    return updated;
   }
 
   async deleteEntry(userId: string, entryId: string) {

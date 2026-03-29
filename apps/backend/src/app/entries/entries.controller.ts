@@ -4,6 +4,7 @@ import {
   Delete,
   Get,
   Param,
+  Patch,
   Post,
   Query,
   Req,
@@ -13,7 +14,7 @@ import {
 import { Request, Response } from "express";
 import { AuthenticatedRequest, JwtGuard } from "../auth/jwt.guard";
 import { EntriesService } from "./entries.service";
-import { CreateEntryDto } from "./entries.dto";
+import { CreateEntryDto, UpdateEntryDto } from "./entries.dto";
 
 @Controller("api/entries")
 @UseGuards(JwtGuard)
@@ -57,6 +58,23 @@ export class EntriesController {
       status: "success",
       message: "Entry fetched successfully",
       data: entries,
+    });
+  }
+
+  @Patch(":id")
+  async updateEntry(
+    @Param("id") id: string,
+    @Body() dto: UpdateEntryDto,
+    @Req() req: Request,
+    @Res() res: Response,
+  ) {
+    const { userId } = req as AuthenticatedRequest;
+    const entry = await this.entriesService.updateEntry(userId, id, dto);
+
+    return res.status(200).json({
+      status: "success",
+      message: "Entry updated successfully",
+      data: entry,
     });
   }
 

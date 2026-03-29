@@ -49,3 +49,38 @@ export class CreateEntryDto {
   @IsOptional()
   notes!: string;
 }
+
+export class UpdateEntryDto {
+  @IsOptional()
+  @IsDateString({}, { message: "Date must be a valid ISO date string" })
+  date?: string;
+
+  @IsOptional()
+  @IsNumber({}, { message: "Hours must be a number" })
+  @Min(0.5, { message: "Hours must be at least 0.5" })
+  @Max(24, { message: "Hours cannot exceed 24" })
+  hours?: number;
+
+  @IsOptional()
+  @IsString()
+  @MaxLength(100, { message: "Project name must be less than 100 characters" })
+  project?: string;
+
+  @IsOptional()
+  @IsArray()
+  @ArrayMinSize(1, { message: "At least one tag is required" })
+  @ArrayMaxSize(10, { message: "Maximum 10 tags allowed" })
+  @IsString({ each: true })
+  tags?: string[];
+
+  @IsOptional()
+  @IsEnum(MoodEnum, {
+    message: "Mood must be one of: great, good, neutral, bad, terrible",
+  })
+  mood?: MoodEnum;
+
+  @IsOptional()
+  @IsString()
+  @MaxLength(500, { message: "Notes must be less than 500 characters" })
+  notes?: string;
+}

@@ -6,6 +6,7 @@ import ProtectedRoute from "./components/layout/ProtectedRoute";
 import LoginPage from "./pages/LoginPage";
 import RegisterPage from "./pages/RegisterPage";
 import DashboardPage from "./pages/DashboardPage";
+import EntriesPage from "./pages/EntriesPage";
 
 function App() {
   return (
@@ -19,6 +20,7 @@ function App() {
           {/* Protected routes */}
           <Route element={<ProtectedRoute />}>
             <Route path="/dashboard" element={<DashboardPage />} />
+            <Route path="/entries" element={<EntriesPage />} />
           </Route>
 
           {/* Default redirect */}

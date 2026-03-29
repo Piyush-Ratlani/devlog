@@ -100,7 +100,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         user: null,
         accessToken: null,
         isAuthenticated: false,
-        isLoading: true,
+        isLoading: false,
       });
     }
   }, []);

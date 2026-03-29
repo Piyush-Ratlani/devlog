@@ -60,7 +60,7 @@ const LoginPage = () => {
         {/* Logo */}
         <div className="text-center mb-8">
           <h1 className="text-brand-500 text-2xl font-bold tracking-tight">
-            DevLog
+            {`<DevLog />`}
           </h1>
           <p className="text-gray-400 text-sm mt-1">
             Track your developer activity
