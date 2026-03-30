@@ -326,7 +326,7 @@ const DashboardPage = () => {
                     borderRadius: "8px",
                     color: "#f3f4f6",
                   }}
-                  formatter={(value: any, _: any, props: any) => [
+                  formatter={(_value: any, _: any, props: any) => [
                     props.payload.mood,
                     "Mood",
                   ]}
