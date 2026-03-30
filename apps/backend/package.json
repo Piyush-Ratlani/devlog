@@ -6,7 +6,7 @@
   "scripts": {
     "dev": "ts-node-dev --respawn --transpile-only src/app/main.ts",
     "dev:express": "ts-node-dev --respawn --transpile-only src/index.ts",
-    "build": "npx prisma generate && tsc",
+    "build": "npx prisma generate && tsc && cp -r src/generated dist/",
     "start": "npm run migrate && node dist/app/main.js",
     "migrate": "npx prisma migrate deploy",
     "test": "jest --forceExit",
