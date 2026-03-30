@@ -17,6 +17,7 @@
   },
   "dependencies": {
     "@devlog/shared": "^1.0.0",
+    "@google/generative-ai": "^0.24.1",
     "@nestjs/common": "^11.1.17",
     "@nestjs/core": "^11.1.17",
     "@nestjs/platform-express": "^11.1.17",

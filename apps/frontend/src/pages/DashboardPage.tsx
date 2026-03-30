@@ -1,20 +1,21 @@
-import { useMemo } from "react";
-import { useAuth } from "../context/AuthContext";
-import { useEntries } from "../hooks/useEntries";
+import { useState, useMemo } from "react";
 import {
-  Bar,
   BarChart,
-  CartesianGrid,
-  Cell,
-  Line,
-  LineChart,
-  Pie,
-  PieChart,
-  ResponsiveContainer,
-  Tooltip,
+  Bar,
   XAxis,
   YAxis,
+  Tooltip,
+  ResponsiveContainer,
+  PieChart,
+  Pie,
+  Cell,
+  LineChart,
+  Line,
+  CartesianGrid,
 } from "recharts";
+import { useEntries } from "../hooks/useEntries";
+import { useAuth } from "../context/AuthContext";
+import { useSummary } from "../hooks/useSummary";
 
 const MOOD_SCORE: Record<string, number> = {
   great: 5,
@@ -43,9 +44,30 @@ const TAG_COLORS = [
   "#f43f5e",
 ];
 
+const getWeekRange = () => {
+  const now = new Date();
+  const dayOfWeek = now.getDay();
+  const monday = new Date(now);
+  monday.setDate(now.getDate() - (dayOfWeek === 0 ? 6 : dayOfWeek - 1));
+  const sunday = new Date(monday);
+  sunday.setDate(monday.getDate() + 6);
+  return {
+    weekStart: monday.toISOString().split("T")[0],
+    weekEnd: sunday.toISOString().split("T")[0],
+  };
+};
+
 const DashboardPage = () => {
   const { user } = useAuth();
   const { entries, isLoading } = useEntries();
+  const {
+    summary,
+    isLoading: summaryLoading,
+    error: summaryError,
+    generate,
+    isGenerating,
+  } = useSummary();
+  const [summaryGenError, setSummaryGenError] = useState<string | null>(null);
 
   const weeklyHours = useMemo(() => {
     const last7Days = Array.from({ length: 7 }, (_, i) => {
@@ -116,6 +138,25 @@ const DashboardPage = () => {
     };
   }, [entries]);
 
+  const handleGenerate = async () => {
+    try {
+      setSummaryGenError(null);
+      const { weekStart, weekEnd } = getWeekRange();
+      await generate(weekStart, weekEnd);
+    } catch (err: unknown) {
+      if (err && typeof err === "object" && "response" in err) {
+        const axiosErr = err as { response: { data: { message: string } } };
+        setSummaryGenError(
+          axiosErr.response?.data?.message ?? "Failed to generate summary",
+        );
+      } else {
+        setSummaryGenError(
+          "AI service is currently unavailable. Please try again later.",
+        );
+      }
+    }
+  };
+
   if (isLoading) {
     return (
       <div className="flex justify-center py-12">
@@ -139,7 +180,7 @@ const DashboardPage = () => {
       {/* Stats Row */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
         {[
-          { label: "Total Hours", value: stats.totalHours },
+          { label: "Total Hours", value: `${stats.totalHours}h` },
           { label: "This Week", value: `${stats.weekHours}h` },
           { label: "Total Entries", value: stats.totalEntries },
           { label: "Avg Mood", value: `${stats.avgMood}/5` },
@@ -148,7 +189,7 @@ const DashboardPage = () => {
             <p className="text-gray-400 text-xs uppercase tracking-wider">
               {stat.label}
             </p>
-            <p className="text-2xl font-blod text-gray-100 mt-1">
+            <p className="text-2xl font-bold text-gray-100 mt-1">
               {stat.value}
             </p>
           </div>
@@ -161,13 +202,12 @@ const DashboardPage = () => {
           <p className="text-gray-500 text-sm mt-1">
             Add entries to see your dashboard
           </p>
-          S
         </div>
       ) : (
         <>
-          {/* Charts row 1 */}
+          {/* Charts Row */}
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-            {/* Weekly Hours Bar Chart */}
+            {/* Weekly Hours */}
             <div className="card">
               <h3 className="text-gray-100 mb-4">Hours This Week</h3>
               <ResponsiveContainer width="100%" height={200}>
@@ -196,7 +236,7 @@ const DashboardPage = () => {
               </ResponsiveContainer>
             </div>
 
-            {/* Tag Frequency Donut */}
+            {/* Tag Frequency */}
             <div className="card">
               <h3 className="text-gray-100 mb-4">Top Tags</h3>
               {tagFrequency.length === 0 ? (
@@ -256,7 +296,7 @@ const DashboardPage = () => {
             </div>
           </div>
 
-          {/* Mood Trend Line Chart */}
+          {/* Mood Trend */}
           <div className="card">
             <h3 className="text-gray-100 mb-4">Mood Trend</h3>
             <ResponsiveContainer width="100%" height={200}>
@@ -309,6 +349,133 @@ const DashboardPage = () => {
                 />
               </LineChart>
             </ResponsiveContainer>
+          </div>
+
+          {/* AI Weekly Summary */}
+          <div className="card space-y-4">
+            <div className="flex items-center justify-between">
+              <div>
+                <h3 className="text-gray-100">AI Weekly Summary</h3>
+                <p className="text-gray-500 text-xs mt-0.5">
+                  Powered by Gemini
+                </p>
+              </div>
+              <button
+                onClick={handleGenerate}
+                disabled={isGenerating}
+                className="btn-primary text-sm"
+              >
+                {isGenerating ? (
+                  <span className="flex items-center gap-2">
+                    <span className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                    Generating...
+                  </span>
+                ) : summary ? (
+                  "Regenerate"
+                ) : (
+                  "Generate Summary"
+                )}
+              </button>
+            </div>
+
+            {/* Error */}
+            {(summaryGenError || summaryError) && (
+              <div className="px-3 py-2 rounded-lg bg-red-500/10 border border-red-500/20">
+                <p className="text-red-400 text-sm">
+                  {summaryGenError || summaryError}
+                </p>
+              </div>
+            )}
+
+            {/* Loading */}
+            {summaryLoading ? (
+              <div className="flex justify-center py-6">
+                <div className="w-6 h-6 border-2 border-brand-500 border-t-transparent rounded-full animate-spin" />
+              </div>
+            ) : summary ? (
+              <div className="space-y-4">
+                {/* Generated text */}
+                <p className="text-gray-300 text-sm leading-relaxed">
+                  {summary.generatedText}
+                </p>
+
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                  {/* Themes */}
+                  <div className="space-y-2">
+                    <p className="text-xs font-medium text-gray-400 uppercase tracking-wider">
+                      Themes
+                    </p>
+                    <ul className="space-y-1">
+                      {summary.themes.map((theme: string) => (
+                        <li
+                          key={theme}
+                          className="text-sm text-gray-300 flex items-start gap-1.5"
+                        >
+                          <span className="text-brand-500 mt-0.5">◆</span>
+                          {theme}
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+
+                  {/* Wins */}
+                  <div className="space-y-2">
+                    <p className="text-xs font-medium text-mood-great uppercase tracking-wider">
+                      Wins
+                    </p>
+                    <ul className="space-y-1">
+                      {summary.wins.map((win: string) => (
+                        <li
+                          key={win}
+                          className="text-sm text-gray-300 flex items-start gap-1.5"
+                        >
+                          <span className="text-mood-great mt-0.5">✓</span>
+                          {win}
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+
+                  {/* Risks */}
+                  <div className="space-y-2">
+                    <p className="text-xs font-medium text-mood-bad uppercase tracking-wider">
+                      Risks
+                    </p>
+                    <ul className="space-y-1">
+                      {summary.risks.map((risk: string) => (
+                        <li
+                          key={risk}
+                          className="text-sm text-gray-300 flex items-start gap-1.5"
+                        >
+                          <span className="text-mood-bad mt-0.5">⚠</span>
+                          {risk}
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                </div>
+
+                {/* Meta */}
+                <div className="pt-2 border-t border-gray-800 flex items-center justify-between">
+                  <p className="text-gray-600 text-xs">
+                    {summary.totalHours}h logged across{" "}
+                    {summary.topProjects.join(", ")}
+                  </p>
+                  <p className="text-gray-600 text-xs">
+                    Generated {new Date(summary.createdAt).toLocaleDateString()}
+                  </p>
+                </div>
+              </div>
+            ) : (
+              <div className="text-center py-6">
+                <p className="text-gray-500 text-sm">
+                  No summary yet for this week.
+                </p>
+                <p className="text-gray-600 text-xs mt-1">
+                  Click Generate Summary to get AI insights on your week.
+                </p>
+              </div>
+            )}
           </div>
         </>
       )}

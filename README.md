@@ -7,30 +7,31 @@ A full-stack developer activity tracker built with TypeScript, NestJS, PostgreSQ
 - **Frontend:** React, TypeScript, Tailwind CSS, Recharts, Vite
 - **Backend:** NestJS, TypeScript, PostgreSQL, Prisma ORM
 - **Auth:** JWT with refresh tokens + httpOnly cookies
-- **AI:** Claude API for weekly summary generation
+- **AI:** Gemini API for weekly summary generation
 - **Deploy:** Railway (backend + DB), Vercel (frontend)
 - **CI:** GitHub Actions
 
 ## Backend Architecture
 
-- **NestJS Modules** — AuthModule, EntriesModule, PrismaModule (global)
-- **Guards** — JwtGuard protects all entry routes and `/api/auth/me`
-- **DTOs** — class-validator decorators validate all incoming request bodies
-- **Exception Filter** — GlobalExceptionFilter formats all errors consistently
-- **Services** — business logic separated from controllers
-- **Dependency Injection** — PrismaService injected via NestJS DI system
+- **NestJS Modules** - AuthModule, EntriesModule, PrismaModule (global)
+- **Guards** - JwtGuard protects all entry routes and `/api/auth/me`
+- **DTOs** - class-validator decorators validate all incoming request bodies
+- **Exception Filter** - GlobalExceptionFilter formats all errors consistently
+- **Services** - business logic separated from controllers
+- **Dependency Injection** - PrismaService injected via NestJS DI system
 
 ## Features
 
 - Log daily work entries with hours, project, tags, and mood
-- Filter entries by date range and tags
-- Dashboard with weekly hours chart, tag frequency, and mood trends
-- AI-generated weekly summary with highlights and risks
+- Edit and delete entries inline
+- Filter entries by date range, tags and project
+- Dashboard with weekly hours chart, tag frequency donut, and mood trend
+- AI-generated weekly summary - themes, wins, and risks powered by Gemini
+- JWT auth with refresh token rotation and httpOnly cookies
 
 ## API Endpoints
 
 ### Auth
-
 
 | Method | Endpoint             | Auth   | Description                                  |
 | ------ | -------------------- | ------ | -------------------------------------------- |
@@ -39,19 +40,16 @@ A full-stack developer activity tracker built with TypeScript, NestJS, PostgreSQ
 | POST   | `/api/auth/refresh`  | Cookie | Get new access token via refresh token       |
 | POST   | `/api/auth/logout`   | Cookie | Logout and invalidate refresh token          |
 
-
 ### Entries
-
 
 | Method | Endpoint           | Auth   | Description                        |
 | ------ | ------------------ | ------ | ---------------------------------- |
 | POST   | `/api/entries`     | Bearer | Create a new log entry             |
+| PATCH  | `/api/entries/:id` | Bearer | Update an entry                    |
 | GET    | `/api/entries`     | Bearer | Get all entries (supports filters) |
 | DELETE | `/api/entries/:id` | Bearer | Delete an entry                    |
 
-
 ### Filters (GET /api/entries)
-
 
 | Query Param | Example            | Description                      |
 | ----------- | ------------------ | -------------------------------- |
@@ -60,14 +58,18 @@ A full-stack developer activity tracker built with TypeScript, NestJS, PostgreSQ
 | `tags`      | `typescript,react` | Filter by tags (comma separated) |
 | `project`   | `DevLog`           | Filter by project name           |
 
+### AI Summary
+
+| Method | Endpoint                | Auth   | Description                   |
+| ------ | ----------------------- | ------ | ----------------------------- |
+| POST   | `/api/summary/generate` | Bearer | Generate a new weekly summary |
+| GET    | `/api/summary/latest`   | Bearer | Fetch latest summary          |
 
 ### Health
-
 
 | Method | Endpoint  | Description         |
 | ------ | --------- | ------------------- |
 | GET    | `/health` | Server health check |
-
 
 ## Project Structure
 
@@ -83,7 +85,7 @@ devlog/
 │   │       ├── __tests__/           # Jest + Supertest tests
 │   │       ├── config/              # Env config, Prisma client
 │   │       ├── controllers/         # HTTP request handlers
-│   │       ├── middleware/           # Auth, validation, error handler
+│   │       ├── middleware/          # Auth, validation, error handler
 │   │       ├── routes/              # Route definitions
 │   │       ├── schemas/             # Zod validation schemas
 │   │       ├── services/            # Business logic
@@ -111,7 +113,7 @@ devlog/
 - **Entry** - date, hours, project, mood, notes, tags (many-to-many)
 - **Tag** - shared across entries, connectOrCreate pattern
 - **RefreshToken** - stored in DB for rotation and invalidation
-- **WeeklySummary** - AI-generated weekly summary (part 6)
+- **WeeklySummary** - AI-generated weekly summary
 
 ## Auth Flow
 
@@ -178,16 +180,14 @@ npm run test:coverage # Run with coverage report
 
 ## Project Status
 
-
-| Part | Focus                                                             | Status     |
-| ---- | ----------------------------------------------------------------- | ---------- |
+| Part | Focus                                                             | Status      |
+| ---- | ----------------------------------------------------------------- | ----------- |
 | 1–2  | TypeScript foundation, Express stub API, validation, shared types | ✅ Complete |
 | 3    | PostgreSQL + Prisma, real auth, JWT refresh rotation, entry CRUD  | ✅ Complete |
 | 4    | Jest + Supertest tests, React + Vite + Tailwind, auth pages       | ✅ Complete |
 | 5    | NestJS migration + entries UI, dashboard with Recharts            | ✅ Complete |
-| 6    | AI summary                                                        | 🔜 Up next |
-| 7–8  | Deploy + GitHub polish                                            | 🔜         |
-
+| 6    | AI weekly summary with Gemini                                     | ✅ Complete |
+| 7–8  | Deploy + RTL frontend tests + GitHub polish                       | 🔜          |
 
 ## Live Demo
 

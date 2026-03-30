@@ -18,4 +18,5 @@ export const env = {
   JWT_ACCESS_EXPIRES_IN: process.env.JWT_ACCESS_EXPIRES_IN ?? "15m",
   JWT_REFRESH_EXPIRES_IN: process.env.JWT_REFRESH_EXPIRES_IN ?? "7d",
   BCRYPT_ROUNDS: process.env.BCRYPT_ROUNDS ?? "10",
+  GEMINI_API_KEY: requireEnv("GEMINI_API_KEY"),
 } as const;
