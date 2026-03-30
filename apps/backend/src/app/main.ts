@@ -47,7 +47,7 @@ async function bootstrap() {
     });
   });
 
-  await app.listen(env.PORT);
+  await app.listen(env.PORT, "0.0.0.0");
   console.log(`[server] Running in ${env.NODE_ENV} mode on port ${env.PORT}`);
   console.log(`[server] Health check → http://localhost:${env.PORT}/health`);
 }
