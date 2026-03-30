@@ -191,4 +191,6 @@ npm run test:coverage # Run with coverage report
 
 ## Live Demo
 
-Coming soon.
+- **Frontend:** https://devlog-prod.vercel.app/
+- **Backend:** https://devlog-production-e216.up.railway.app
+- **Health Check:** https://devlog-production-e216.up.railway.app/health
