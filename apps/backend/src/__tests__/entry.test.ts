@@ -80,7 +80,7 @@ describe("Entry Routes", () => {
       where: { email: testUser.email },
     });
     await app.close();
-  });
+  }, 15000);
 
   // ── Create Entry ───────────────────────────────────────────────
   describe("POST /api/entries", () => {

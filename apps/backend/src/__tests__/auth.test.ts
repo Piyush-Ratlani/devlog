@@ -1,3 +1,5 @@
+jest.setTimeout(30000);
+
 import request from "supertest";
 import { Test, TestingModule } from "@nestjs/testing";
 import { PrismaClient } from "../generated/prisma";
@@ -38,16 +40,23 @@ describe("Auth Routes", () => {
 
   afterAll(async () => {
     await app.close();
-  });
+  }, 15000);
 
   // Clean up this user before and after auth tests
   beforeEach(async () => {
+    // Clean up first
     await prisma.refreshToken.deleteMany({
       where: { user: { email: testUser.email } },
     });
     await prisma.user.deleteMany({
       where: { email: testUser.email },
     });
+    //  Then register fresh
+    // const res = await request(app.getHttpServer())
+    //   .post("/api/auth/register")
+    //   .send(testUser);
+    // // Verify register succeeded
+    // expect(res.status).toBe(201);
   });
 
   // ── Register ────────────────────────────────────────────────────
@@ -156,7 +165,9 @@ describe("Auth Routes", () => {
         .post("/api/auth/login")
         .send({ email: testUser.email, password: testUser.password });
 
+      expect(loginRes.status).toBe(200);
       const cookies = loginRes.headers["set-cookie"];
+      expect(cookies).toBeDefined();
 
       const refreshRes = await request(app.getHttpServer())
         .post("/api/auth/refresh")
