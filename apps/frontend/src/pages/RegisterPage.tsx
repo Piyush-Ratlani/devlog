@@ -33,6 +33,14 @@ const RegisterPage = () => {
   const navigate = useNavigate();
   const [serverError, setServerError] = useState<string | null>(null);
 
+  const {
+    register,
+    handleSubmit,
+    formState: { errors, isSubmitting },
+  } = useForm<RegisterFormData>({
+    resolver: zodResolver(registerSchema),
+  });
+
   // Show spinner while auth state is being determined
   if (isLoading) {
     return (
@@ -46,14 +54,6 @@ const RegisterPage = () => {
   if (isAuthenticated) {
     return <Navigate to="/dashboard" replace />;
   }
-
-  const {
-    register,
-    handleSubmit,
-    formState: { errors, isSubmitting },
-  } = useForm<RegisterFormData>({
-    resolver: zodResolver(registerSchema),
-  });
 
   const onSubmit = async (data: RegisterFormData) => {
     try {
@@ -124,7 +124,6 @@ const RegisterPage = () => {
               </label>
               <input
                 id="email"
-                type="email"
                 placeholder="you@example.com"
                 className="input-field"
                 autoComplete="email"

@@ -17,6 +17,14 @@ const LoginPage = () => {
   const navigate = useNavigate();
   const [serverError, setServerError] = useState<string | null>(null);
 
+  const {
+    register,
+    handleSubmit,
+    formState: { errors, isSubmitting },
+  } = useForm<LoginFormData>({
+    resolver: zodResolver(loginSchema),
+  });
+
   // Show spinner while auth state is being determined
   if (isLoading) {
     return (
@@ -30,14 +38,6 @@ const LoginPage = () => {
   if (isAuthenticated) {
     return <Navigate to="/dashboard" replace />;
   }
-
-  const {
-    register,
-    handleSubmit,
-    formState: { errors, isSubmitting },
-  } = useForm<LoginFormData>({
-    resolver: zodResolver(loginSchema),
-  });
 
   const onSubmit = async (data: LoginFormData) => {
     try {
@@ -88,7 +88,6 @@ const LoginPage = () => {
               </label>
               <input
                 id="email"
-                type="email"
                 placeholder="you@example.com"
                 className="input-field"
                 autoComplete="email"
