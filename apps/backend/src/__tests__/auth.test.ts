@@ -159,13 +159,6 @@ describe("Auth Routes", () => {
         .post("/api/auth/register")
         .send(testUser);
 
-      console.log(
-        "register status:",
-        registerRes.status,
-        registerRes.body.message,
-      );
-      console.log("testUser password:", testUser.password);
-
       expect(registerRes.status).toBe(201);
       // Small delay to ensure DB transaction is committed
       await new Promise(resolve => setTimeout(resolve, 100));
@@ -173,9 +166,6 @@ describe("Auth Routes", () => {
       const loginRes = await request(app.getHttpServer())
         .post("/api/auth/login")
         .send({ email: testUser.email, password: testUser.password });
-
-      console.log("login status:", loginRes.status, loginRes.body.message);
-      console.log("login body:", JSON.stringify(loginRes.body));
 
       expect(loginRes.status).toBe(200);
 
