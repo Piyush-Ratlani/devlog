@@ -189,6 +189,20 @@ npm run test:coverage # Run with coverage report
 | 6    | AI weekly summary with Gemini                                     | ✅ Complete |
 | 7–8  | Deploy + RTL frontend tests + GitHub polish                       | 🔜          |
 
+## Screenshots
+
+### Dashboard
+
+![Dashboard](docs/screenshots/dashboard.png)
+
+### Entries
+
+![Entries](docs/screenshots/entries.png)
+
+### Login
+
+![Login](docs/screenshots/login.png)
+
 ## Live Demo
 
 - **Frontend:** https://devlog-prod.vercel.app/
