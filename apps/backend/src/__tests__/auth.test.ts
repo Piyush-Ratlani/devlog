@@ -44,19 +44,17 @@ describe("Auth Routes", () => {
 
   // Clean up this user before and after auth tests
   beforeEach(async () => {
-    // Clean up first
-    await prisma.refreshToken.deleteMany({
-      where: { user: { email: testUser.email } },
-    });
-    await prisma.user.deleteMany({
+    const user = await prisma.user.findUnique({
       where: { email: testUser.email },
     });
-    //  Then register fresh
-    // const res = await request(app.getHttpServer())
-    //   .post("/api/auth/register")
-    //   .send(testUser);
-    // // Verify register succeeded
-    // expect(res.status).toBe(201);
+    if (user) {
+      await prisma.refreshToken.deleteMany({
+        where: { userId: user.id },
+      });
+      await prisma.user.delete({
+        where: { id: user.id },
+      });
+    }
   });
 
   // ── Register ────────────────────────────────────────────────────
@@ -157,9 +155,10 @@ describe("Auth Routes", () => {
   // ── Refresh ─────────────────────────────────────────────────────
   describe("POST /api/auth/refresh", () => {
     it("should return new accessToken when valid refresh cookie exists", async () => {
-      await request(app.getHttpServer())
+      const registerRes = await request(app.getHttpServer())
         .post("/api/auth/register")
         .send(testUser);
+      expect(registerRes.status).toBe(201);
 
       const loginRes = await request(app.getHttpServer())
         .post("/api/auth/login")
@@ -188,9 +187,10 @@ describe("Auth Routes", () => {
   // ── Logout ──────────────────────────────────────────────────────
   describe("POST /api/auth/logout", () => {
     it("should logout and clear refresh cookie", async () => {
-      await request(app.getHttpServer())
+      const registerRes = await request(app.getHttpServer())
         .post("/api/auth/register")
         .send(testUser);
+      expect(registerRes.status).toBe(201);
 
       const loginRes = await request(app.getHttpServer())
         .post("/api/auth/login")
