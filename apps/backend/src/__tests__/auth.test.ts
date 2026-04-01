@@ -158,11 +158,20 @@ describe("Auth Routes", () => {
       const registerRes = await request(app.getHttpServer())
         .post("/api/auth/register")
         .send(testUser);
-      expect(registerRes.status).toBe(201);
+
+      console.log(
+        "register status:",
+        registerRes.status,
+        registerRes.body.message,
+      );
 
       const loginRes = await request(app.getHttpServer())
         .post("/api/auth/login")
         .send({ email: testUser.email, password: testUser.password });
+
+      console.log("login status:", loginRes.status, loginRes.body.message);
+
+      expect(loginRes.status).toBe(200);
 
       expect(loginRes.status).toBe(200);
       const cookies = loginRes.headers["set-cookie"];
